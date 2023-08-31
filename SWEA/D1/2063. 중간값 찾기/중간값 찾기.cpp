@@ -1,9 +1,9 @@
 #include<iostream>
 #include<vector>
 #include<algorithm>
-
+ 
 using namespace std;
-
+ 
 int main()
 {
     int N;
@@ -13,10 +13,10 @@ int main()
     {
         cin>>Num[i];
     }
-    
+     
     sort(Num.begin(), Num.end());  
     cout<<Num[N/2];
-    
-
+     
+ 
     return 0;
 }
