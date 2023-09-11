@@ -13,7 +13,6 @@ void DFS(int index, int sum, int depth) {
 
 
 	if (sum == S&&depth!=0) {
-
 		cnt++;
 	}
 
