@@ -16,7 +16,7 @@ void DFS(int index, int sum, int depth) {
 
 		cnt++;
 	}
-	if (index >= N) return;
+
 	
 	for (int i = index; i < N; i++) {
 		sum += Num[i];
