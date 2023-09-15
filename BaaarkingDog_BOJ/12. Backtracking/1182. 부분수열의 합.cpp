@@ -38,7 +38,9 @@ int main() {
 	}
 	sort(Num.begin(), Num.end());
 
-	DFS(0, 0 ,0);
+	DFS(0, 0 ,0); //이건 백트래킹이 아니라 완전탐색..
+
+
 	cout << cnt;
 
 	return 0;
