@@ -1,151 +1,155 @@
 #include<iostream>
 #include<vector>
-#include<queue>
-#include<algorithm>
 
 using namespace std;
+//시계방향
+// 0
+//3 1
+// 2
 
-int N, M;
-int Office[8][8];
-int Min = 64;
-//상:0 우:1 하:2 좌:3
-int dx[4] = { 0,1,0,-1 };
-int dy[4] = { -1,0,1,0 };
+//CCTV 5가지 종류
+//1번: 1
+//2번: 1 3     //2번 회전    
+//3번: 0 1
+//4번: 0 1 3
+//5번: 0 1 2 3  //안돌려도 됨
 
-struct CCTV_Pos
-{
-	int num;
-	pair<int, int> point;
-	bool operator<(const CCTV_Pos& other) const
-	{
-		return num < other.num;
-	}
+struct pos {
+	int row;
+	int col;
+	int info;
 };
 
-priority_queue<CCTV_Pos> CCTV_Info;
-void CCTV_selection(int y, int x, int n, int dir);
-void CCTV_Move(int current_y, int current_x, int dir);
-void DFS();
+int N, M;
+int Map[8][8] = { 0, }; 
+int Result[8][8] = { 0, }; //CCTV가 바라보는 곳 1로 바꾸기
+int Answer = 2112345678;
+vector<pos> CCTV;   //CCTV 좌표
+void FloodFill(int row, int col, int dir);
 
 
+int Rotation[6][7] = {  // 0 1 2 3 0 1 2
+	{0,0,0,0,0,0,0},
+	{0,1,0,0,0,1,0},
+	{0,1,0,1,0,1,0},  //사실 1만큼만 돌리면 됨
+	{1,1,0,0,1,1,0},
+	{1,1,0,1,1,1,0},
+	{1,1,1,1,0,0,0}   //안돌려도 됨
+};
+//상 우 하 좌
+const int dr[4] = { -1,0,1,0 };
+const int dc[4] = { 0,1,0,-1 };
 
-void CCTV_selection(int y, int x, int n, int dir)
-{
-	switch (n) {
-	case 1: {
-		CCTV_Move(y, x, dir);
-		break;
-	}
-	case 2: {
-		CCTV_Move(y, x, dir);
-		CCTV_Move(y, x, dir + 2);
-		break;
-	}
-	case 3: {
-		CCTV_Move(y, x, dir);
-		CCTV_Move(y, x, dir + 1);
-		break;
-	}
-	case 4: {
-		CCTV_Move(y, x, dir);
-		CCTV_Move(y, x, dir + 1);
-		CCTV_Move(y, x, dir + 2);
-		break;
-	}
-	case 5: {
-		CCTV_Move(y, x, dir);
-		CCTV_Move(y, x, dir + 1);
-		CCTV_Move(y, x, dir + 2);
-		CCTV_Move(y, x, dir + 3);
-		break;
-	}
-	}
-}
-void CCTV_Move(int current_y, int current_x, int dir)
-{
-	dir = dir % 4;
-	while (true)
-	{
-		current_y += dy[dir];
-		current_x += dx[dir];
-		if (current_x < 0 || current_y < 0 || current_x >= M || current_y >= N) return;
-		if (Office[current_y][current_x] == 6) return;
-		if (Office[current_y][current_x] != 0) continue;
-		Office[current_y][current_x] = 7;
-	}
-}
+//BackTracking
+void BackTracking(int depth) {
 
-void DFS()
-{
-	//cout <<"DFS\n";
-	if (CCTV_Info.empty())
-	{
-		int count = 0;
-		for (int i = 0; i < N; i++)
-		{
-			for (int j = 0; j < M; j++)
-			{
-				//cout << Office[i][j] << " ";
-				if (Office[i][j] == 0)
-					count++;
+	if (depth >= CCTV.size()) {
+		int cnt = 0;
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < M; j++) {
+				if (Result[i][j] == 0) cnt++;
 			}
-			//cout << "\n";
 		}
-		if (Min > count) Min = count;
+		Answer = min(Answer, cnt);
 		return;
 	}
-	int BackUp[8][8];
-	int current_y = CCTV_Info.top().point.first;
-	int current_x = CCTV_Info.top().point.second;
-	int CCTV_Num = CCTV_Info.top().num;
-	for (int dir = 0; dir < 4; dir++)
-	{
-		priority_queue<CCTV_Pos> temppq;
-		temppq = CCTV_Info;
-		//Office 복사해놓기
-		for (int i = 0; i < N; i++)
-		{
-			for (int j = 0; j < M; j++)
-			{
-				BackUp[i][j] = Office[i][j];
+
+	int cctvNum = CCTV[depth].info;
+	int nowRow = CCTV[depth].row;
+	int nowCol = CCTV[depth].col;
+
+	int Result_temp[8][8] = { 0, };  //원래 Result값 담아두는 배열
+
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			Result_temp[i][j] = Result[i][j];
+		}
+	}
+
+	if (cctvNum == 2) {  //1만큼만 돌리기
+		for (int i = 0; i < 2; i++) {
+			for (int dir = i; dir < i + 4; dir++) { //네바퀴 돌리기
+				if (Rotation[cctvNum][dir] == 0) continue;
+
+				//해당 방향 채우는 함수
+				FloodFill(nowRow, nowCol, dir - i);
+			}
+			BackTracking(depth + 1);
+			for (int i = 0; i < N; i++) {
+				for (int j = 0; j < M; j++) {
+					Result[i][j] = Result_temp[i][j];
+				}
 			}
 		}
-		CCTV_selection(current_y, current_x, CCTV_Num, dir);
-		CCTV_Info.pop();
-		DFS();
-		//Office 다시 백업
-		for (int i = 0; i < N; i++)
-		{
-			for (int j = 0; j < M; j++)
-			{
-				Office[i][j] = BackUp[i][j];
+	}
+	else if (cctvNum == 5) { //안돌려도됨
+		for (int dir = 0; dir < 4; dir++) { //네바퀴 돌리기
+			if (Rotation[cctvNum][dir] == 0) continue;
+
+			//해당 방향 채우는 함수
+			FloodFill(nowRow, nowCol, dir);
+		}
+		BackTracking(depth + 1);
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < M; j++) {
+				Result[i][j] = Result_temp[i][j];
 			}
 		}
-		//Priority Queue 백업
-		CCTV_Info = temppq;
+	}
+	else { //네바퀴 다 돌려야함
+		for (int i = 0; i < 4; i++) {
+			for (int dir = i; dir < i + 4; dir++) { //네바퀴 돌리기
+				if (Rotation[cctvNum][dir] == 0) continue;
+				
+				//해당 방향 채우는 함수
+				FloodFill(nowRow, nowCol, dir - i);
+			}
+			BackTracking(depth + 1);
+			for (int i = 0; i < N; i++) {
+				for (int j = 0; j < M; j++) {
+					Result[i][j] = Result_temp[i][j];
+				}
+			}
+		 }
+	}
+}
+
+void FloodFill(int row, int col, int dir) {
+
+	int nowRow = row;
+	int nowCol = col;
+	while (1) {
+
+		int nextRow = nowRow + dr[dir];
+		int nextCol = nowCol + dc[dir];
+		if (nextRow < 0 || nextCol < 0 || nextRow >= N || nextCol >= M) break;
+		if (Map[nextRow][nextCol] == 6) break;
+		Result[nextRow][nextCol] = 1;
+		nowRow = nextRow;
+		nowCol = nextCol;
 	}
 }
 
 
-int main()
-{
+int main() {
+
+
 	cin >> N >> M;
-	for (int y = 0; y < N; y++)
-	{
-		for (int x = 0; x < M; x++)
-		{
-			cin >> Office[y][x];
-			if (Office[y][x] != 0 && Office[y][x] != 6)
-			{
-				CCTV_Pos pos;
-				pos.num = Office[y][x];
-				pos.point = (make_pair(y, x));
-				CCTV_Info.push(pos);
-				
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			cin >> Map[i][j];
+			if (Map[i][j] >= 1 && Map[i][j] <= 5) {
+				CCTV.push_back({ i,j, Map[i][j]});
+				Result[i][j] = 1;
+			}
+			else if (Map[i][j] == 6) {
+				Result[i][j] = -1;
 			}
 		}
 	}
-	DFS();
-	cout << Min;
+
+	BackTracking(0);
+	cout << Answer;
+
 	return 0;
 }
