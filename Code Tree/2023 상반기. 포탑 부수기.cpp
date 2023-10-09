@@ -1,5 +1,6 @@
 #include<iostream>
 #include<queue>
+#include<deque>
 #include<vector>
 
 using namespace std;
@@ -122,6 +123,65 @@ void LasorDFS(int now_r, int now_c, vector<pos> path) {
 	}
 
 }
+
+bool LasorBFS() {
+
+	bool success = false;
+	pos tmp = { -1,-1 };
+	pos Distance[11][11];
+	for (int i = 1; i <= N; i++) {
+		for (int j = 1; j <= M; j++) {
+			Distance[i][j] = tmp;
+		}
+	}
+	int start_r = pqAttack.top().row;
+	int start_c = pqAttack.top().col;
+
+	queue<pos> q;
+	q.push({ start_r, start_c });
+	Distance[start_r][start_c] = {start_r,start_c};
+
+	while (!q.empty()) {
+		int nowRow = q.front().row;
+		int nowCol = q.front().col;
+		q.pop();
+		//만약 도달했다면
+		if (nowRow == pqTarget.top().row && nowCol == pqTarget.top().col) {
+			
+			success = true;
+			int temp_r = Distance[nowRow][nowCol].row;
+			int temp_c = Distance[nowRow][nowCol].col;
+			Map[nowRow][nowCol] -= Map[start_r][start_c];
+			Participated[nowRow][nowCol] = true;
+			while (1) {
+				Participated[temp_r][temp_c] = true;
+				if (temp_r == start_r && temp_c == start_c) break;
+				Map[temp_r][temp_c] -= (Map[start_r][start_c] / 2);
+				pos Next = Distance[temp_r][temp_c];
+				temp_r = Next.row;
+				temp_c = Next.col;
+			}
+			break;
+		}
+
+		//탐색
+		for (int dir = 0; dir < 4; dir++) {
+			int next_r = nowRow + dr[dir];
+			int next_c = nowCol + dc[dir];
+			if (next_r <= 0) next_r = N;
+			else if (next_r > N) next_r = 1;
+			if (next_c <= 0) next_c = M;
+			else if (next_c > M) next_c = 1;
+			if (Map[next_r][next_c] <= 0) continue;
+			if (Distance[next_r][next_c].row!=-1||Distance[next_r][next_c].col!=-1) continue;
+			Distance[next_r][next_c] = {nowRow,nowCol};
+			q.push({ next_r, next_c });
+		}
+	}
+	return success;
+}
+
+
 void BombBFS(int now_r, int now_c, int pow) {
 	//공격방법 2순위 : 포탄 공격
 	//레이저 공격 불가능일 때
@@ -157,33 +217,35 @@ void StartAttack() {
 	Map[attacker_r][attacker_c] += (N + M);
 	int attackerPow = Map[attacker_r][attacker_c];
 
-	Visited[attacker_r][attacker_c] = true;
-	vector<pos> temp;
-	LasorOK = false;
-	bool checkPoint1 = false;
-	bool checkPoint2 = false;
-	for (int dir = 0; dir < 4; dir++) {
-		if (Map[attacker_r + dr[dir]][attacker_c + dc[dir]] != 0) checkPoint1 = true;
-		if (Map[pqTarget.top().row + dr[dir]][pqTarget.top().col + dc[dir]] != 0) checkPoint2 = true;
-		if (checkPoint1&&checkPoint2) break;
-	}
-	if (checkPoint1&&checkPoint2) {
-		LasorDFS(attacker_r, attacker_c, temp);
-	}
-	if (LasorOK) {
-		//cout << "Lasor\n";
-		for (int i = 0; i < FinalPath.size(); i++) {
-			pos Now = FinalPath[i];
-			Participated[Now.row][Now.col] = true;
-			if (Now.row == pqTarget.top().row && Now.col == pqTarget.top().col) {
-				Map[Now.row][Now.col] -= attackerPow;
-			}
-			else {
-				Map[Now.row][Now.col] -= (attackerPow / 2);
-			}
-		}
-	}
-	else {
+	//Visited[attacker_r][attacker_c] = true;
+	//vector<pos> temp;
+	//LasorOK = false;
+	//bool checkPoint1 = false;
+	//bool checkPoint2 = false;
+	//for (int dir = 0; dir < 4; dir++) {
+	//	if (Map[attacker_r + dr[dir]][attacker_c + dc[dir]] != 0) checkPoint1 = true;
+	//	if (Map[pqTarget.top().row + dr[dir]][pqTarget.top().col + dc[dir]] != 0) checkPoint2 = true;
+	//	if (checkPoint1&&checkPoint2) break;
+	//}
+	//if (checkPoint1&&checkPoint2) {
+	//	LasorDFS(attacker_r, attacker_c, temp);
+	//}
+	//if (LasorOK) {
+	//	//cout << "Lasor\n";
+	//	for (int i = 0; i < FinalPath.size(); i++) {
+	//		pos Now = FinalPath[i];
+	//		Participated[Now.row][Now.col] = true;
+	//		if (Now.row == pqTarget.top().row && Now.col == pqTarget.top().col) {
+	//			Map[Now.row][Now.col] -= attackerPow;
+	//		}
+	//		else {
+	//			Map[Now.row][Now.col] -= (attackerPow / 2);
+	//		}
+	//	}
+	//}
+	bool LaserSucceed = LasorBFS();
+	
+	if(!LaserSucceed) {
 		//cout << "BOMB\n";
 		BombBFS(pqTarget.top().row, pqTarget.top().col, attackerPow);
 	}
@@ -217,14 +279,14 @@ void solution() {
 		nowTime = i;
 		StartAttack();
 
-		cout << nowTime << "번째 턴\n";
+		/*cout << nowTime << "번째 턴\n";
 		for (int r = 1; r <= N; r++) {
 			for (int c = 1; c <= M; c++) {
 				cout << Map[r][c] << " ";
 			}
 			cout << "\n";
 		}
-		cout << "\n";
+		cout << "\n";*/
 
 	}
 	cout << pqTarget.top().power;
