@@ -26,23 +26,23 @@ using namespace std;
 int N, M;
 int nowRow, nowCol;
 int nowDir;
-int Map[12][11] = { 0, };
+int Map[50][50] = { 0, };
 int Answer = 0;
 
 int Rotation(int dir) {
 
 	//╩С ©Л го аб   0 1 2 3
 	if (dir == 0) {
-		return 1;
-	}
-	else if (dir == 1) {
-		return 2;
-	}
-	else if (dir == 2) {
 		return 3;
 	}
-	else if (dir == 3) {
+	else if (dir == 1) {
 		return 0;
+	}
+	else if (dir == 2) {
+		return 1;
+	}
+	else if (dir == 3) {
+		return 2;
 	}
 }
 
@@ -100,7 +100,7 @@ void Simulation() {
 void solution() {
 
 	Simulation();
-	cout << Answer;
+	cout << Answer<<"\n";
 }
 
 void input() {
