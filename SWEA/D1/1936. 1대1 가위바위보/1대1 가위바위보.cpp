@@ -1,30 +1,21 @@
-/////////////////////////////////////////////////////////////////////////////////////////////
-#include<iostream>
+a, b = input().split()
+a = int(a)
+b = int(b)
 
-using namespace std;
 
-int main()
-{
-    int A,B;
-    cin>>A>>B;
-    
-    if(A==1)
-    {
-        if(B==2) cout<<"B";
-        else cout<<"A";
-    }
-    else if(A==2)
-    {
-         if(B==3) cout<<"B";
-        else cout<<"A";
-    }
-    else //A==3
-    {
-         if(B==1) cout<<"B";
-        else cout<<"A";
-    } 
-        
-    
-    
-    return 0;
-}
+if a==1:
+
+    if b == 2:
+        print("A")
+    else:
+        print("B")
+elif a==2:
+    if b == 1:
+        print("B")
+    else:
+        print("A")
+else:
+    if b == 1:
+        print("B")
+    else:
+        print("A")
