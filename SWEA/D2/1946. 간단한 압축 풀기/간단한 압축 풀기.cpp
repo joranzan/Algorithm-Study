@@ -1,43 +1,22 @@
-#include<iostream>
-#include<vector>
+test = int(input())
 
-using namespace std;
 
-int main()
-{
-	ios::sync_with_stdio(false);
-	cin.tie(NULL); cout.tie(NULL);
 
-	int T;
-	cin >> T;
 
-	for (int test = 0; test < T; test++)
-	{
-		cout << "#" << test+1 << "\n";
-		int N;
-		cin >> N;
-		int cnt = 0;
-		for (int i = 0; i < N; i++)
-		{
-			char c;
-			int num;
-			cin >> c >> num;
+for t in range(test):
+    print(f"#{t+1}")
+    index = 0
+    num = int(input())
+    for i in range(num):
+        letter, cnt = input().split()
+        cnt = int(cnt)
 
-			for (int j = 0; j < num; j++)
-			{
-				
-				cnt++;
-				cout << c;
-				if (cnt == 10)
-				{
-					cnt = 0;
-					cout << "\n";
-				}
-			}
-		}
-		if (cnt != 0) cout << "\n";
+        for j in range(cnt):
+            print(letter, end="")
+            index += 1
+            if index==10:
+                index = 0
+                print()
 
-	}
 
-	return 0;
-}
+    print()
