@@ -1,8 +1,5 @@
 test = int(input())
 
-
-
-
 for t in range(test):
     print(f"#{t+1}")
     index = 0
@@ -17,6 +14,4 @@ for t in range(test):
             if index==10:
                 index = 0
                 print()
-
-
     print()
