@@ -87,7 +87,7 @@ void changePower() {
 void swapParent() {
     int c1, c2;
     cin >> c1 >> c2;
-
+    if (Info[c1].parent == Info[c2].parent) return;
     for (int i = 0; i < Info[Info[c1].parent].child.size(); i++) {
         if (Info[Info[c1].parent].child[i] == c1) Info[Info[c1].parent].child[i] = c2;
     }
