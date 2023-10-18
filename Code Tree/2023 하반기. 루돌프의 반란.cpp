@@ -84,6 +84,9 @@ void Collision(int dir, int num) {  //충돌
 		//1) 밖으로 날아간 경우(탈락)
 		if (next_r <= 0 || next_c <= 0 || next_r > N || next_c > N) {
 			Santa[santa_num].valid = false;
+			if(Map[RD_r][RD_c] == santa_num) {
+				Map[Santa[santa_num].row][Santa[santa_num].col] = 0;
+			}
 			break;
 		}
 		//2) 산타없는 경우
@@ -96,16 +99,11 @@ void Collision(int dir, int num) {  //충돌
 			Santa[santa_num].col = next_c;
 			break;
 		}
-		else if (!Santa[Map[next_r][next_c]].valid) {
-			Map[Santa[santa_num].row][Santa[santa_num].col] = 0;
-			Map[next_r][next_c] = santa_num;
-			Santa[santa_num].row = next_r;
-			Santa[santa_num].col = next_c;
-			break;
-		}
 		else {
 			int next_santa_num = Map[next_r][next_c];
-			Map[Santa[santa_num].row][Santa[santa_num].col] = 0;
+			if (Map[RD_r][RD_c] == santa_num) {
+				Map[Santa[santa_num].row][Santa[santa_num].col] = 0;
+			}
 			Map[next_r][next_c] = santa_num;
 			Santa[santa_num].row = next_r;
 			Santa[santa_num].col = next_c;
@@ -183,14 +181,13 @@ void moveRudolf() {
 
 void moveSanta() {
 	//3. 산타의 움직임
-	
+	int santaColiNum = 0;
+	int santaColiDir = 0;
 	//1번부터 P번까지 순서대로
 	for (int i = 1; i <= P; i++) {
 		//기절(기절시간 --) 했거나 탈락한 산타 무시
 		if (!Santa[i].valid) continue;
-		if (Santa[i].stun !=0) {
-			continue;
-		}
+		if (Santa[i].stun != 0) continue;
 		//루돌프에게 가까워지는 방향으로 1칸 이동 (상우하좌 순위) -> 기존 거리 계산
 		int prevDist = (Santa[i].row - RD_r) * (Santa[i].row - RD_r) + (Santa[i].col - RD_c) * (Santa[i].col - RD_c);
 		priority_queue<selection> pq;
@@ -200,7 +197,9 @@ void moveSanta() {
 			int next_c = Santa[i].col + dc[j];
 			if (next_r <= 0 || next_c <= 0 || next_r > N || next_c > N) continue;
 			//1) 다른산타(탈락 아닌애들)랑 겹치는 칸 X
-			if (Map[next_r][next_c] != 0) continue;
+			if (Map[next_r][next_c] != 0) {
+				continue;
+			}
 			int nextDist = (RD_r - next_r) * (RD_r - next_r) + (RD_c - next_c) * (RD_c - next_c);
 			if (nextDist >= prevDist) continue;
 			pq.push({ nextDist, j });
@@ -215,11 +214,14 @@ void moveSanta() {
 		Map[Santa[i].row][Santa[i].col]=i; 
 
 		if (Santa[i].row == RD_r && Santa[i].col == RD_c) {
-			Santa[i].score += D;
-			Collision(nextDir, D);
+			santaColiNum = i;
+			santaColiDir = nextDir;
+			Santa[santaColiNum].score += D;
+			Collision(santaColiDir, D);
 		}
 
 	}
+
 	
 }
 
@@ -291,48 +293,6 @@ int main() {
 
 
 
-void gogo() {
-	int santa_num = Map[RD_r][RD_c];
-	if (!Santa[santa_num].valid) return;
-	int rDir = reverseDir(RD_dir);
-	while (1) {
-		//While문 사용
-		int next_r, next_c;
-		if (Map[RD_r][RD_c] == santa_num) {
-			//루돌프 박은 후 C만큼 날라간 뒤 기절
-			Santa[santa_num].stun = 1;
-			next_r = Santa[santa_num].row + C * dr[rDir];
-			next_c = Santa[santa_num].col + C * dc[rDir];
-		}
-		else {
-			next_r = Santa[santa_num].row + dr[rDir];
-			next_c = Santa[santa_num].col + dc[rDir];
-		}
-
-		//break조건  
-		//1) 밖으로 날아간 경우(탈락)
-		if (next_r <= 0 || next_c <= 0 || next_r > N || next_c > N) {
-			Santa[santa_num].valid = false;
-			break;
-		}
-		//2) 산타없는 경우
-		if (Map[next_r][next_c] == 0) {
-			Map[Santa[santa_num].row][Santa[santa_num].col] = 0;
-			Map[next_r][next_c] = santa_num;
-			Santa[santa_num].row = next_r;
-			Santa[santa_num].col = next_c;
-			break;
-		}
-		else {
-			int next_santa_num = Map[next_r][next_c];
-			Map[Santa[santa_num].row][Santa[santa_num].col] = 0;
-			Map[next_r][next_c] = santa_num;
-			Santa[santa_num].row = next_r;
-			Santa[santa_num].col = next_c;
-			santa_num = next_santa_num;
-		}
-	}
-}
 
 
 //문제 분석
@@ -375,7 +335,7 @@ void gogo() {
 //break조건 : 1) 밖으로 날아간 경우 2) 산타없는 경우(탈락)
 
 //6. 기절(k)
-//루돌프와 충돌 후 기절 (다음턴(k+1)까지 기절)  1로 설정
+//루돌프와 충돌 후 기절 (다음턴(k+1)까지 기절)  2로 설정
 //k+2부터 활성화
 //기절하면 못움직임
 //루돌프는 돌진 할 수 있음
