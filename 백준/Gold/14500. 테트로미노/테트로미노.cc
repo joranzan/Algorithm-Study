@@ -36,7 +36,7 @@ void shape1() {
 				sum -= Map[i][left];
 				left++;
 				right++;
-				//if (right >= M) break;
+				if (right >= M) break;
 				sum += Map[i][right];
 			}
 		}
@@ -60,7 +60,7 @@ void shape1() {
 				sum -= Map[left][i];
 				left++;
 				right++;
-				//if (right >= N) break;
+				if (right >= N) break;
 				sum += Map[right][i];
 			}
 		}
