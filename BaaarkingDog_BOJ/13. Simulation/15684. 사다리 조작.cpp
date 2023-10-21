@@ -83,7 +83,7 @@ bool check(int num) {
 		nowRow++;
 	}
 
-	if (nowRow==H&&nowCol == num) return true;
+	if (nowCol == num) return true;
 	else return false;
 }
 
@@ -94,7 +94,7 @@ void SelectLine(int index, int depth) {
 	}
 
 	if (Answer <= depth) return;
-
+	if (depth > 3) return;
 	//≈ª√‚ ¡∂∞«
 	bool flag = true;
 	for (int i = 1; i <= N; i++) {
@@ -201,7 +201,7 @@ void solution() {
 	}
 
 	SelectLine(0, 0);
-	if (Answer == 2112345678) {
+	if (Answer > 3) {
 		cout << "-1\n";
 	}
 	else cout << Answer << "\n";
@@ -218,3 +218,4 @@ int main() {
 
 	return 0;
 }
+
