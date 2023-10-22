@@ -94,7 +94,7 @@ void solution() {
 	int Answer = 0;
 
 	do {
-
+		if (order[4] != 1) continue;
 		Answer = max(Answer, playStart());
 
 	} while (next_permutation(order + 1, order + 10));
