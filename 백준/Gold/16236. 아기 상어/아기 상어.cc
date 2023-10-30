@@ -144,14 +144,7 @@ void input() {
 void solution() {
 
 	while (1) {
-		bool flag = false;
-		for (int i = 1; i <= 6; i++) {
-			if (fish[i].size() != 0) {
-				flag = true;
-				break;
-			}
-		}
-		if (!flag) break;
+		
 		Simulation();
 		if (cnt == 0) {
 			break;
