@@ -20,7 +20,6 @@ using namespace std;
 
 vector<pair<int,char>> Cube[3][3][3];
 int T;
-map<char, int> planeMap;
 
 //윗면일 때 시계방향 매핑
 const int Mapping[6][2][6] = {
@@ -67,16 +66,23 @@ void rotationU(int dir) {   //0
 				for (int i = 0; i < Cube[0][r][c].size(); i++) {
 					int face = Mapping[0][dir][Cube[0][r][c][i].first];
 					char color = Cube[0][r][c][i].second;
-					temp[c][2 - r].push_back({ face,color });
+					if (dir == 0) {
+						temp[c][2 - r].push_back({ face,color });
+					}
+					else if (dir == 1) {
+						temp[2 - c][r].push_back({ face,color });
+					}
+					
 				}
 			}
 		}
 		//다시 옮겨담기
 		for (int r = 0; r < 3; r++) {
 			for (int c = 0; c < 3; c++) {
-
+				Cube[0][r][c] = temp[r][c];
 			}
 		}
+		int debugging = -1;
 }
 void rotationD(int dir) {   //1
 	vector<pair<int, char>> temp[3][3];
@@ -86,8 +92,19 @@ void rotationD(int dir) {   //1
 			for (int i = 0; i < Cube[2][r][c].size(); i++) {
 				int face = Mapping[1][dir][Cube[2][r][c][i].first];
 				char color = Cube[2][r][c][i].second;
-				temp[2-c][r].push_back({ face,color });
+				if (dir == 0) {
+					temp[2-c][r].push_back({ face,color });
+				}
+				else if (dir == 1) {
+					temp[c][2- r].push_back({ face,color });
+				}
 			}
+		}
+	}
+	//다시 옮겨담기
+	for (int r = 0; r < 3; r++) {
+		for (int c = 0; c < 3; c++) {
+			Cube[2][r][c] = temp[r][c];
 		}
 	}
 }
@@ -95,52 +112,102 @@ void rotationF(int dir) {
 	vector<pair<int, char>> temp[3][3];
 
 	for (int h = 0; h < 3; h++) {
-		for (int r = 0; r < 3; r++) {
-			for (int i = 0; i < Cube[h][r][2].size(); i++) {
-				int face = Mapping[2][dir][Cube[h][r][2][i].first];
-				char color = Cube[h][r][2][i].second;
-				temp[r][2 - h].push_back({ face,color });
+		for (int c = 0; c < 3; c++) {
+			for (int i = 0; i < Cube[h][2][c].size(); i++) {
+				int face = Mapping[2][dir][Cube[h][2][c][i].first];
+				char color = Cube[h][2][c][i].second;
+				if (dir == 0) {
+					temp[c][2 - h].push_back({ face,color });
+				}
+				else if (dir == 1) {
+					temp[2 - c][h].push_back({ face,color });
+				}
+
 			}
 		}
 	}
+	//다시 옮겨담기
+	for (int h = 0; h < 3; h++) {
+		for (int c = 0; c < 3; c++) {
+			Cube[h][2][c] = temp[h][c];
+		}
+	}
+	int debugging = -1;
 }
 void rotationB(int dir) {
 	vector<pair<int, char>> temp[3][3];
 
 	for (int h = 0; h < 3; h++) {
-		for (int r = 0; r < 3; r++) {
-			for (int i = 0; i < Cube[h][r][0].size(); i++) {
-				int face = Mapping[3][dir][Cube[h][r][0][i].first];
-				char color = Cube[h][r][0][i].second;
-				temp[2 - r][h].push_back({ face,color });
+		for (int c = 0; c < 3; c++) {
+			for (int i = 0; i < Cube[h][0][c].size(); i++) {
+				int face = Mapping[3][dir][Cube[h][0][c][i].first];
+				char color = Cube[h][0][c][i].second;
+				if (dir == 0) {
+					temp[2-c][h].push_back({ face,color });
+				}
+				else if (dir == 1) {
+					temp[c][2-h].push_back({ face,color });
+				}
 			}
 		}
 	}
+	//다시 옮겨담기
+	for (int h = 0; h < 3; h++) {
+		for (int c = 0; c < 3; c++) {
+			Cube[h][0][c] = temp[h][c];
+		}
+	}
+	int debugging = -1;
 }
 void rotationL(int dir) {
 
 	vector<pair<int, char>> temp[3][3];
 
-	for (int h = 0; h < 2; h++) {
-		for (int c = 0; c < 2; c++) {
-			for (int i = 0; i < Cube[h][0][c].size(); i++) {
-				int face = Mapping[4][dir][Cube[h][0][c][i].first];
-				char color = Cube[h][0][c][i].second;
-				temp[2 - c][h].push_back({ face,color });
+	for (int h = 0; h < 3; h++) {
+		for (int r = 0; r < 3; r++) {
+			for (int i = 0; i < Cube[h][r][0].size(); i++) {
+				int face = Mapping[4][dir][Cube[h][r][0][i].first];
+				char color = Cube[h][r][0][i].second;
+				if (dir == 0) {
+					temp[r][2 - h].push_back({ face,color });
+				}
+				else if (dir == 1) {
+					temp[2 - r][h].push_back({ face,color });
+				}
+				
 			}
+		}
+	}
+	//다시 옮겨담기
+	for (int h = 0; h < 3; h++) {
+		for (int r = 0; r < 3; r++) {
+			Cube[h][r][0] = temp[h][r];
+			int debugging = -1;
 		}
 	}
 }
 void rotationR(int dir) {
+
 	vector<pair<int, char>> temp[3][3];
 
-	for (int h = 0; h < 2; h++) {
-		for (int c = 0; c < 2; c++) {
-			for (int i = 0; i < Cube[h][2][c].size(); i++) {
-				int face = Mapping[5][dir][Cube[h][2][c][i].first];
-				char color = Cube[h][2][c][i].second;
-				temp[c][2 - h].push_back({ face,color });
+	for (int h = 0; h < 3; h++) {
+		for (int r = 0; r < 3; r++) {
+			for (int i = 0; i < Cube[h][r][2].size(); i++) {
+				int face = Mapping[5][dir][Cube[h][r][2][i].first];
+				char color = Cube[h][r][2][i].second;
+				if (dir == 0) {
+					temp[2- r][h].push_back({ face,color });
+				}
+				else if (dir == 1) {
+					temp[r][2-h].push_back({ face,color });
+				}
 			}
+		}
+	}
+	//다시 옮겨담기
+	for (int h = 0; h < 3; h++) {
+		for (int r = 0; r < 3; r++) {
+			Cube[h][r][2] = temp[h][r];
 		}
 	}
 }
@@ -180,58 +247,50 @@ void simulation(char plane, char dir) {
 void init() {
 
 	//초기화
-	for (int h = 0; h < 2; h++) {
+	for (int h = 0; h < 3; h++) {
 		for (int r = 0; r < 3; r++) {
 			for (int c = 0; c < 3; c++) {
-				Cube[r][c][h].clear();
+				Cube[h][r][c].clear();
 			}
 		}
 	}
-	
-
 
 	// 윗면 아랫면 채우기
 	for (int r = 0; r < 3; r++) {
 		for (int c = 0; c < 3; c++) {
 			//윗면 채우기
-			Cube[0][r][c].push_back({ 0,'W' });
+			Cube[0][r][c].push_back({ 0,'w' });
 			//아랫면 채우기
-			Cube[2][r][c].push_back({ 1,'Y' });
+			Cube[2][r][c].push_back({ 1,'y' });
 		}
 	}
 	//앞 뒤 면 채우기
 	for (int h = 0; h < 3; h++) {
-		for (int r = 0; r < 3; r++) {
+		for (int c = 0; c < 3; c++) {
 			//앞면 채우기
-			Cube[h][r][2].push_back({ 2,'R' });
+			Cube[h][2][c].push_back({ 2,'r' });
 			//뒷면 채우기
-			Cube[h][r][0].push_back({ 3,'O' });
+			Cube[h][0][c].push_back({ 3,'o' });
 		}
 	}
 
 	//왼쪽면 오른쪽면 채우기
 	for (int h = 0; h < 3; h++) {
-		for (int c = 0; c < 3; c++) {
+		for (int r = 0; r < 3; r++) {
 			//왼쪽면
-			Cube[h][0][c].push_back({ 4,'G' });
+			Cube[h][r][0].push_back({ 4,'g' });
 			//오른쪽면
-			Cube[h][2][c].push_back({ 5,'B' });
+			Cube[h][r][2].push_back({ 5,'b' });
 		}
 	}
 
-	planeMap['U'] = 0;
-	planeMap['D'] = 1;
-	planeMap['F'] = 2;
-	planeMap['B'] = 3;
-	planeMap['L'] = 4;
-	planeMap['R'] = 5;
-	
 	int debugging = -1;
 }
 
 void input() {
 	cin >> T;
 	for (int test = 0; test < T; test++) {
+		init();
 		int N;
 		cin >> N;
 
@@ -243,8 +302,18 @@ void input() {
 			simulation(plane, dir);
 		}
 
+		for (int r = 0; r < 3; r++) {
+			for (int c = 0; c < 3; c++) {
+				for (int i = 0; i < Cube[0][r][c].size(); i++) {
+					if (Cube[0][r][c][i].first == 0) {
+						cout << Cube[0][r][c][i].second;
+						break;
+					}
+				}
+			}
+			cout << "\n";
+		}
 	}
-	
 }
 
 
@@ -253,7 +322,7 @@ int main() {
 
 	ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL);
 
-	init();
+	
 	input();
 	
 
