@@ -43,43 +43,72 @@ int nowColSize = 3;  //하나의 열의 크기
 
 void RSort() {
 
+	int max_index = 0;
 
-	for (int i = 0; i < nowRowSize; i++) {
-
+	for (int r = 0; r < nowRowSize; r++) {
 		int DAT[101] = { 0, };
 		vector<rule> temp;
 
-		for (int j = 0; j < 100; j++) {
-
-			int nowNum = Board[i][j];
-			if (nowNum == 0) continue;
-			Board[i][j] = 0;
-			DAT[nowNum]++;
+		for (int c = 0; c < 100; c++) {
+			if (Board[r][c] == 0) continue;
+			DAT[Board[r][c]]++;
+			Board[r][c] = 0;
 		}
 
 		for (int j = 1; j <= 100; j++) {
-			if (DAT[j] <= 0) continue;
+			if (DAT[j] == 0) continue;
 			temp.push_back({ j,DAT[j] });
 		}
 
 		sort(temp.begin(), temp.end());
-		Board[i].clear();
-		for (int j = 0; j < 100; j++) {
-			if (j >= temp.size()) break;
-			Board[i].push_back(temp[j].value);
-			if (Board[i].size() >= 100) break;
-			Board[i].push_back(temp[j].cnt);
-			if (Board[i].size() >= 100) break;
+
+		int index = 0;
+		for (int j = 0; j < temp.size(); j++) {
+			Board[r][index] = temp[j].value;
+			index++;
+			if (index >= 100) break;
+			Board[r][index] = temp[j].cnt;
+			index++;
+			if (index >= 100) break;
 		}
-		int tempsize = Board[i].size();
-		nowRowSize = max(tempsize, nowRowSize);
+		max_index = max(max_index, index);
 	}
+	nowColSize = max_index;
 }
 
 void CSort() {
 
+	int max_index = 0;
 
+	for (int c = 0; c < nowColSize; c++) {
+		int DAT[101] = { 0, };
+		vector<rule> temp;
 
+		for (int r = 0; r < 100; r++) {
+			if (Board[r][c] == 0) continue;
+			DAT[Board[r][c]]++;
+			Board[r][c] = 0;
+		}
+
+		for (int j = 1; j <= 100; j++) {
+			if (DAT[j] == 0) continue;
+			temp.push_back({ j,DAT[j] });
+		}
+
+		sort(temp.begin(), temp.end());
+
+		int index = 0;
+		for (int j = 0; j < temp.size(); j++) {
+			Board[index][c] = temp[j].value;
+			index++;
+			if (index >= 100) break;
+			Board[index][c] = temp[j].cnt;
+			index++;
+			if (index >= 100) break;
+		}
+		max_index = max(max_index, index);
+	}
+	nowRowSize = max_index;
 }
 
 
@@ -89,31 +118,38 @@ void input() {
 	C -= 1;
 	for (int i = 0; i < 3; i++) {
 		for (int j = 0; j < 3; j++) {
-			int temp;
-			cin >> temp;
-			Board[i].push_back(temp);
+			cin >> Board[i][j];
 		}
 	}
 }
-void solution() {
+int solution() {
+
+
+	if (Board[R][C] == K) {
+		return 0;
+	}
 
 	for (int time = 1; time <= 100; time++) {
 
-		int rowSize = Board[0].size(); //하나의 행의 크기
-		int colSize = Board.size(); //하나의 열의 크기
+		//조건 만족하면 time 출력 후 탈출
 
 
-		if (rowSize >= colSize) {
+		if (nowRowSize >= nowColSize) {
 			RSort();
 		}
-		else if (rowSize < colSize) {
+		else if (nowRowSize < nowColSize) {
 			CSort();
 		}
 
 		//조건 만족하면 time 출력 후 탈출
+		if (Board[R][C] == K) {
+			return time;
+		}
+
 	}
 
 	//조건 만족 못했으면 -1
+	return -1;
 }
 
 
@@ -123,7 +159,7 @@ int main() {
 	ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL);
 
 	input();
-	solution();
+	cout << solution();
 
 
 	return 0;
