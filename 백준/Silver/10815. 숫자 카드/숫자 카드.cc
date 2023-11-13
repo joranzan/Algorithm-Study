@@ -1,42 +1,36 @@
 #include<iostream>
-#include<string>
+#include<algorithm>
 #include<set>
-
 using namespace std;
 
-int DAT[10000001];
-int DAT2[10000001];
-
+int arr[500000] = { 0, };
 
 int main() {
 
-    ios::sync_with_stdio(false);
-    cin.tie(NULL); cout.tie(NULL);
+	ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL);
 
-    int N;
-    cin >> N;
-    for (int i = 0; i < N; i++) {
-        int temp;
-        cin >> temp;
-        if (temp >= 0) DAT[temp] = 1;
-        else if (temp < 0) DAT2[abs(temp)] = 1;
-    }
-
-    int M; 
-    cin >> M;
-    for (int i = 0; i < M; i++) {
-        int temp;
-        cin >> temp;
-        if (temp >= 0) {
-            if (DAT[temp]) cout << "1 ";
-            else cout << "0 ";
-        }
-        else if (temp < 0) {
-            if(DAT2[abs(temp)] == 1) cout << "1 ";
-            else cout << "0 ";
-        }
-    }
+	int N;
+	
+	cin >> N;
 
 
-    return 0;
+	for (int i = 0; i < N; i++) {     //500000
+		cin >> arr[i];
+	}
+
+	sort(arr, arr + N);
+
+	int M;
+	cin >> M;
+
+	for (int i = 0; i < M; i++) {    //500000 
+		int num;
+		cin >> num;
+		//20
+		if (binary_search(arr, arr+N, num)) cout << "1 ";
+		else cout << "0 ";
+	}
+
+
+	return 0;
 }
