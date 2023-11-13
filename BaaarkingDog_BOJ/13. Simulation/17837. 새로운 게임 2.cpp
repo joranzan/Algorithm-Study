@@ -49,7 +49,7 @@ const int Oppdir[5] = { 0,2,1,4,3 };
 
 int N, K;
 int Map[13][13] = { 0, };
-Info Horse[10];   //현재 N번 말의 위치 저장
+Info Horse[11];   //현재 N번 말의 위치 저장
 vector<int> StackedMap[13][13];  //말 쌓인 정보
 
 bool Exit = false;
@@ -120,32 +120,6 @@ void Blue(int num) {
 	int nowDir = Horse[num].dir;
 	nowDir = Oppdir[nowDir];
 	Horse[num].dir = nowDir;
-
-	int nowRow = Horse[num].row;
-	int nowCol = Horse[num].col;
-
-	int nextRow = nowRow + dr[nowDir];
-	int nextCol = nowCol + dc[nowDir];
-	
-	if (nextRow <= 0 || nextCol <= 0 || nextRow > N || nextCol > N) return;
-	if (Map[nextRow][nextCol] == 2) return;
-
-	vector<int> temp;
-	while (1) {
-		temp.push_back(StackedMap[nowRow][nowCol].back());
-		StackedMap[nowRow][nowCol].pop_back();
-		if (temp.back() == num) break;
-	}
-
-	for (int i = temp.size() - 1; i >= 0; i--) {
-		Horse[temp[i]].row = nextRow;
-		Horse[temp[i]].col = nextCol;
-		StackedMap[nextRow][nextCol].push_back(temp[i]);
-	}
-
-	if (StackedMap[nextRow][nextCol].size() >= 4) Exit = true;
-
-
 }
 
 
@@ -170,15 +144,28 @@ void solution() {
 			if (nextRow <= 0 || nextCol <= 0 || nextRow > N || nextCol > N) {
 				Blue(j);
 			}
+			else if (Map[nextRow][nextCol] == 2) {
+				Blue(j);
+			}
+			
+			nowDir = Horse[j].dir;
+			nextRow = nowRow + dr[nowDir];
+			nextCol = nowCol + dc[nowDir];
+
+			if (nextRow <= 0 || nextCol <= 0 || nextRow > N || nextCol > N) {
+				continue;
+			}
 			else if (Map[nextRow][nextCol] == 0) {
 				White(j);
 			}
 			else if (Map[nextRow][nextCol] == 1) {
 				Red(j);
 			}
+
 			else if (Map[nextRow][nextCol] == 2) {
-				Blue(j);
+				continue;
 			}
+			
 
 			if (Exit) {
 				cout << i;
