@@ -35,6 +35,7 @@ vector<int> debugging;
 
 void DFS(int depth, int sum) {
 
+    if(sum + (10-depth)*40<=Answer) return;
 	if (depth >= 10) {
 		//Answer 갱신
 		Answer = max(Answer, sum);
