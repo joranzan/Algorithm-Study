@@ -40,8 +40,8 @@ struct pos {
 	int dir;
 };
 
-const int dr[9] = {0, -1,-1,0,1,1,1,0,-1 };
-const int dc[9] = {0, 0,-1,-1,-1,0,1,1,1 };
+const int dr[9] = {0, -1, -1, 0, 1, 1, 1, 0,-1 };
+const int dc[9] = {0,  0, -1,-1,-1,0,1,1, 1 };
 int Map[4][4] = { 0, };
 
 int Dead[17] = { 0, };
@@ -64,10 +64,14 @@ void DFS(int sum, int depth) {
 	movefish();
 	int Temp[4][4] = { 0, };
 
+	pos Fish_Temp[17];
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
 			Temp[i][j] = Map[i][j];
 		}
+	}
+	for (int i = 1; i <= 16; i++) {
+		Fish_Temp[i] = Fish[i];
 	}
 
 	vector<pair<int, int>> Candi;  //먹을 후보
@@ -78,7 +82,7 @@ void DFS(int sum, int depth) {
 		
 		//3) 물고기 없는 칸으로 이동 X
 		if (sharkRow < 0 || sharkCol < 0 || sharkRow >= 4 || sharkCol >= 4) break;
-		if (Temp[sharkRow][sharkCol] == 0) break;
+		if (Map[sharkRow][sharkCol] == 0) continue;
 		Candi.push_back({ sharkRow, sharkCol });
 	}
 	//이동 가능한 칸 없으면 귀환
@@ -88,6 +92,10 @@ void DFS(int sum, int depth) {
 	}
 	sharkRow = Shark.row;
 	sharkCol = Shark.col;
+
+	if (Fish[9].row == 0 && Fish[9].col == 1) {
+		int debugging = -1;
+	}
 
 	for (int i = 0; i < Candi.size(); i++) {
 
@@ -106,11 +114,12 @@ void DFS(int sum, int depth) {
 		//재귀 호출 부분
 		DFS(sum + nextFish, depth+1);
 
-		//상어 이동
-		
-		//물고기 먹음
+
 		Dead[nextFish] = 0;
-		Shark.row = sharkRow; Shark.col = sharkCol; Shark.dir = sharkDir;
+		
+		Shark.row = sharkRow; 
+		Shark.col = sharkCol;
+		Shark.dir = sharkDir;
 
 		for (int j = 0; j < 4; j++) {
 			for (int k = 0; k < 4; k++) {
@@ -118,6 +127,10 @@ void DFS(int sum, int depth) {
 			}
 		}
 
+		for (int j = 1; j <= 16; j++) {
+			Fish[j] = Fish_Temp[j];
+		}
+		int debugging = -1;
 	}
 
 }
@@ -162,6 +175,7 @@ void input() {
 
 void movefish() {
 
+
 	for (int i = 1; i <= 16; i++) {
 		if (Dead[i] == 1) continue;  //죽은 물고기 무시
 
@@ -179,13 +193,13 @@ void movefish() {
 			if (nextRow < 0 || nextCol < 0 || nextRow >= 4 || nextCol >= 4) continue;
 			if (Map[nextRow][nextCol] == -1) continue;
 
-			if (Map[nextRow][nextCol] == 0) {  //그냥 빈칸인 경우 이동
-				Map[nextRow][nextCol] = i;
-				Map[nowRow][nowCol] = 0;
-				Fish[i].row = nextRow;
-				Fish[i].col = nextCol;
-				Fish[i].dir = nextDir;
-				break;
+			else if (Map[nextRow][nextCol] == 0) {  //그냥 빈칸인 경우 이동
+					Map[nextRow][nextCol] = i;
+					Map[nowRow][nowCol] = 0;
+					Fish[i].row = nextRow;
+					Fish[i].col = nextCol;
+					Fish[i].dir = nextDir;
+					break;
 			}
 			else {    //다른 물고기가 존재하는 경우
 				//다른 물고기 있으면 Swap(방향 유지)
