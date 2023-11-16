@@ -30,8 +30,12 @@ const int dc[8] = { 0,1,1,1,0,-1,-1,-1 };
 vector<pos> Exist;
 
 
-void solution() {
 
+//Main 함수
+int main() {
+	ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL);
+
+	input();
 	for (int test = 0; test < K; test++) {
 
 		Simulation2();
@@ -47,16 +51,6 @@ void solution() {
 	}
 
 	cout << Answer;
-
-}
-
-
-//Main 함수
-int main() {
-	ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL);
-
-	input();
-	solution();
 
 	return 0;
 }
