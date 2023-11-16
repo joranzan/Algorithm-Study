@@ -196,13 +196,9 @@ void Simulation2() {
 			now.col = nextCol;
 			Temp.push_back(now);
 		}
-	}
-
-	for (int e = 0; e < Exist.size(); e++) {
-		int r = Exist[e].row;
-		int c = Exist[e].col;
 		Map[r][c].clear();
 	}
+
 
 	Exist.clear();
 
