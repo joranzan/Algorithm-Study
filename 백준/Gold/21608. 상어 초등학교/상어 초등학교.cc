@@ -69,9 +69,12 @@ void chooseSeat(int id) {
 		int debugging = -1;
 	}
 
+	seat Candi = { 0,0,N,N };
+
 	for (int i = 1; i <= N; i++) {
 		for (int j = 1; j <= N; j++) {
 			if (Map[i][j] != 0) continue;
+			
 			int nowRow = i;
 			int nowCol = j;
 			int fcnt = 0;
@@ -83,11 +86,13 @@ void chooseSeat(int id) {
 				if (Map[nextRow][nextCol] == 0) ecnt++;
 				else if (Student[id].DAT[Map[nextRow][nextCol]] == 1) fcnt++;
 			}
-			pq.push({ fcnt,ecnt,nowRow, nowCol });
+			//pq.push({ fcnt,ecnt,nowRow, nowCol });
+			seat Now = { fcnt,ecnt,nowRow,nowCol };
+			if (Candi < Now) Candi = Now;
 		}
 	}
-
-	Map[pq.top().row][pq.top().col] = id;
+	Map[Candi.row][Candi.col] = id;
+	//Map[pq.top().row][pq.top().col] = id;
 
 }
 
