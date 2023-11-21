@@ -35,7 +35,7 @@ struct pos {
 
 
 int N, M;
-long long Map[51][51] = { 0, };
+int Map[51][51] = { 0, };
 query Query[101];
 int Cloud[51][51] = { 0, };
 vector<pos> CloudPos;
@@ -156,7 +156,7 @@ void solution() {
 		makeCloud();
 	}
 
-	long long Answer = 0;
+	int Answer = 0;
 
 	for (int r = 1; r <= N; r++) {
 		for (int c = 1; c <= N; c++) {
