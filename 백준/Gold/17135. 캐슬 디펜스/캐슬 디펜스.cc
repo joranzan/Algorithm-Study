@@ -82,12 +82,7 @@ void Attack(int lastRow) {
 		if (tempMap[gotAttacked[i].row][gotAttacked[i].col] == 1) {
 			tempMap[gotAttacked[i].row][gotAttacked[i].col] = 0;
 			killed++;
-			enemyCnt--;
 		}
-	}
-
-	for (int i = 1; i <= M; i++) {
-		if (tempMap[lastRow][i] == 1) enemyCnt--;
 	}
 
 	for (int i = 0; i < 3; i++) {
@@ -104,7 +99,6 @@ void DFS(int depth, int index) {
 		for (int i = 1; i <= N; i++) {
 			for (int j = 1; j <= M; j++) {
 				tempMap[i][j] = Map[i][j];
-				if (Map[i][j] == 1) enemyCnt++;
 			}
 		}
 		killed = 0;
