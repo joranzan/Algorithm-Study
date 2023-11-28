@@ -1,4 +1,5 @@
 #include<iostream>
+#include<cstring>
 #include<vector>
 #include<queue>
 #include<algorithm>
@@ -74,9 +75,6 @@ void Attack(int lastRow) {
 		gotAttacked.push_back({ Candi.row, Candi.col });
 	}
 
-	if (gotAttacked.size() != 3) {
-		int debugging = -1;
-	}
 
 	for (int i = 0; i < gotAttacked.size(); i++) {
 		if (tempMap[gotAttacked[i].row][gotAttacked[i].col] == 1) {
@@ -96,18 +94,13 @@ void DFS(int depth, int index) {
 
 	if (depth >= 3) {
 
-		for (int i = 1; i <= N; i++) {
-			for (int j = 1; j <= M; j++) {
-				tempMap[i][j] = Map[i][j];
-			}
-		}
+		memcpy(tempMap, Map, sizeof(Map));
 		killed = 0;
 
 		while (Attacker[0].row!=0) {
 			Attack(Attacker[0].row - 1);
 		}
-		//cout << "\n";
-		//궁수 위치 정했으면 공격 개시
+
 		Answer = max(Answer, killed);
 		for (int i = 0; i < 3; i++) {
 			Attacker[i].row = N + 1;
