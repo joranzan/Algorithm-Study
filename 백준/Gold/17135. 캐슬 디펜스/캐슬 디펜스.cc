@@ -52,7 +52,7 @@ int enemyCnt = 0;
 int Answer = 0;
 int killed = 0;
 
-void Attack() {
+void Attack(int lastRow) {
 
 	vector<pos> gotAttacked;
 	for (int a = 0; a < 3; a++) {
@@ -60,7 +60,8 @@ void Attack() {
 		int attackerCol = Attacker[a].col;
 
 		far Candi = { 0, M, 250 };
-		for (int r = N; r >= 1; r--) {
+
+		for (int r = lastRow; r >= 1; r--) {
 			for (int c = 1; c <= M; c++) {
 				if (tempMap[r][c] == 0) continue;
 				int dist = abs(attackerRow - r) + abs(attackerCol - c);
@@ -84,26 +85,17 @@ void Attack() {
 			enemyCnt--;
 		}
 	}
-}
 
-void Move() {
-
-	for (int c = 1; c <= M; c++) {
-		if (tempMap[N][c] == 1) {
-			enemyCnt--;
-			tempMap[N][c] = 0;
-		}
+	for (int i = 1; i <= M; i++) {
+		if (tempMap[lastRow][i] == 1) enemyCnt--;
 	}
 
-	for (int r = N-1; r >= 1; r--) {
-		for (int c = 1; c <= M; c++) {
-			if (tempMap[r][c] == 0) continue;
-			tempMap[r + 1][c] = tempMap[r][c];
-			tempMap[r][c] = 0;
-		}
+	for (int i = 0; i < 3; i++) {
+		Attacker[i].row--;
 	}
 
 }
+
 
 void DFS(int depth, int index) {
 
@@ -117,19 +109,15 @@ void DFS(int depth, int index) {
 		}
 		killed = 0;
 
-		while (enemyCnt) {
-			//cout << enemyCnt << " ";
-			Attack();
-			if (enemyCnt == 0) break;
-			Move();
-		}
-		if (killed == 9) {
-			int debugging = -1;
+		while (Attacker[0].row!=0) {
+			Attack(Attacker[0].row - 1);
 		}
 		//cout << "\n";
 		//궁수 위치 정했으면 공격 개시
 		Answer = max(Answer, killed);
-
+		for (int i = 0; i < 3; i++) {
+			Attacker[i].row = N + 1;
+		}
 		return;
 	}
 
