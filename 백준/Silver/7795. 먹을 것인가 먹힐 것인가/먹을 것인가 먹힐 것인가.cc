@@ -12,18 +12,13 @@ void solution() {
 	int cnt = 0;
 	for (int i = 0; i < N; i++) {
 		int nowNum = arrN[i];
-		if (nowNum <= arrM[M - 1]) break;
-		if (nowNum > arrM[0]) {
+		if (nowNum <= arrM[0]) break;
+		if (nowNum > arrM[M-1]) {
 			cnt += M;
 			continue;
 		}
-		for (int j = 0; j < M; j++) {
-			int nextNum = arrM[j];
-			if (nowNum <= nextNum) continue;
-			
-			cnt += (M - j);
-			break;
-		}
+		
+		cnt += (lower_bound(arrM, arrM + M, nowNum) - arrM);
 	}
 	cout << cnt << "\n";
 }
@@ -39,9 +34,8 @@ void input() {
 	}
 
 	sort(arrN, arrN + N, greater<int>());
-	sort(arrM, arrM + M, greater<int>());
-	// 8 7 3 1 1
-	// 6 3 1
+	sort(arrM, arrM + M);
+
 }
 
 
