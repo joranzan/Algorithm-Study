@@ -43,17 +43,19 @@ public:
 
 		Node* newNode = new Node(data);
 		//현재 아무것도 없으면
-		if (head==nullptr&&tail==nullptr) {
+		if (head==nullptr||tail == nullptr) {
 			head = newNode;
 			tail = newNode;
 			curNode = newNode->next;
 		}
 		//맨뒤 삽입 경우
 		else if (curNode == nullptr) {
-			if (tail != nullptr) {
-				tail->next = newNode; //////////////////////////
-				newNode->prev = tail;
-			}
+			tail->next = newNode; //////////////////////////
+			newNode->prev = tail;
+			//if (tail != nullptr) {
+			//	tail->next = newNode; //////////////////////////
+			//	newNode->prev = tail;
+			//}
 			tail = newNode;
 		}
 		//맨앞에 삽입 경우
