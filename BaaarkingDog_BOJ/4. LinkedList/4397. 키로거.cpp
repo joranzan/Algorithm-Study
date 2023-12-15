@@ -43,15 +43,19 @@ public:
 
 		Node* newNode = new Node(data);
 		//현재 아무것도 없으면
-		if (head==nullptr&&tail==nullptr) {
+		if (head==nullptr||tail == nullptr) {
 			head = newNode;
 			tail = newNode;
 			curNode = newNode->next;
 		}
 		//맨뒤 삽입 경우
 		else if (curNode == nullptr) {
-			tail->next = newNode;
+			tail->next = newNode; //////////////////////////
 			newNode->prev = tail;
+			//if (tail != nullptr) {
+			//	tail->next = newNode; //////////////////////////
+			//	newNode->prev = tail;
+			//}
 			tail = newNode;
 		}
 		//맨앞에 삽입 경우
@@ -71,9 +75,16 @@ public:
 
 	//백스페이스
 	//커서 앞에 내용 지움
-	/*void BackSpace() {
+	void BackSpace() {
+		if (head == nullptr) return;
+		if (tail == nullptr) return;
 		if (curNode == nullptr) {
 			tail = tail->prev;
+			//tail이 head였던 경우
+			if (tail == nullptr) {
+				head = nullptr;
+				return;
+			}
 			tail->next = nullptr;
 			return;
 		}
@@ -81,37 +92,40 @@ public:
 		
 		Node* target = curNode->prev;
 		curNode->prev = target->prev;
-		target->prev->next = curNode;
+		
 		if (curNode->prev == nullptr) head = curNode;
-	}*/
-	void BackSpace() {
-		if (curNode == nullptr) {
-			if (tail != nullptr) {
-				tail = tail->prev;
-				if (tail != nullptr) {
-					tail->next = nullptr;
-				}
-			}
-		}
-		else {
-			Node* target = curNode->prev;
-			if (target != nullptr) {
-				curNode->prev = target->prev;
-				if (curNode->prev != nullptr) {
-					curNode->prev->next = curNode;
-				}
-				else {
-					head = curNode;
-				}
-				delete target;
-			}
-		}
+		else target->prev->next = curNode;
 	}
+	//void BackSpace() {
+	//	if (curNode == nullptr) {
+	//		if (tail != nullptr) {
+	//			tail = tail->prev;
+	//			if (tail != nullptr) {
+	//				tail->next = nullptr;
+	//			}
+	//		}
+	//	}
+	//	else {
+	//		Node* target = curNode->prev;
+	//		if (target != nullptr) {
+	//			curNode->prev = target->prev;
+	//			if (curNode->prev != nullptr) {
+	//				curNode->prev->next = curNode;
+	//			}
+	//			else {
+	//				head = curNode;
+	//			}
+	//			delete target;
+	//		}
+	//	}
+	//}
 
 	//왼쪽 화살표
 	//커서 왼쪽으로 이동
 	void MoveLeft() {
 		if (head == nullptr) return;
+		if (tail == nullptr) return;
+
 		if (curNode == nullptr) {
 			curNode = tail;
 			return;
@@ -125,6 +139,7 @@ public:
 	//커서 오른쪽으로 이동
 	void MoveRight() {
 		//아무것도 없으면 무시
+		if (head == nullptr) return;
 		if (tail == nullptr) return;
 		if (curNode != nullptr) {
 			curNode = curNode->next;
@@ -152,7 +167,7 @@ int main() {
 	int T;
 	cin >> T;
 
-	for (int test = 0; test < 2; test++) {
+	for (int test = 0; test < T; test++) {
 		
 		cin >> mystring;
 		DoublyLinkedList myList;
