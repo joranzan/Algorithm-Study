@@ -3,7 +3,7 @@
 using namespace std;
 
 int N;
-int DP[2][10001] = { 0, };
+int DP[10001] = { 0, };
 int Wine[10001] = { 0, };
 
 int main() {
@@ -13,37 +13,23 @@ int main() {
 
 	for (int i = 1; i <= N; i++) {
 		cin >> Wine[i];
-		DP[0][i] = Wine[i];
 	}
 
-	int Answer = 0;
-
-	for (int i = 1; i < N; i++) {
-		int anchor1 = DP[0][i];
-		int anchor2 = DP[1][i];
-
-		DP[1][i + 1] = max(DP[1][i + 1], anchor1 + Wine[i + 1]);
-
-		//if (anchor1 == 0) continue;
-
-		for (int j = i + 2; j <= N; j++) {
-			DP[0][j] = max(DP[0][j], anchor1 + Wine[j]);
-		}
+	DP[1] = Wine[1];
+	DP[2] = DP[1] + Wine[2];
 
 
-		//if (anchor2 == 0) continue;
+	for (int i = 3; i <= N; i++) {
+		
+		int a = DP[i - 2] + Wine[i];
+		int b = DP[i - 3] + Wine[i - 1] + Wine[i];
+		int c = DP[i - 1];
 
-		for (int j = i + 2; j <= N; j++) {
-			DP[0][j] = max(DP[0][j], anchor2 + Wine[j]);
-		}
+		DP[i] = max(a, max(b, c));
 	}
 
-	for (int i = 1; i <= N; i++) {
-		Answer = max(Answer, DP[0][i]);
-		Answer = max(Answer, DP[1][i]);
-	}
 
-	cout << Answer;
+	cout << DP[N];
 
 	return 0;
 }
@@ -52,12 +38,20 @@ int main() {
 //연속 3잔 안됨
 
 /*
-6 10 13 9  8  1
-6 10 19 19 27 20
-  16 23 28 31 29
+마시거나 안마시거나
 
-1000 1000 1000 1000 1000
-1000      2000 2000 2000
+OOX
+OXX -> 비교 할 필요없음
+XOX -> 비교할 필요없음
+XXX  -> 비교 할 필요없음
+
+XXO  -> 비교 할 필요없음
+XOO
+OXO
+
+
+DP[i] = DP[i-3] + Wine[i-1] + Wine[i]
+DP[i] = DP[i-2] + Wine[i]
 
 
 */
