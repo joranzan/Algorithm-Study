@@ -31,33 +31,33 @@ int main() {
 		DP[i][N] = 1;
 	}
 
-	long long Answer = 0;
-	for (int i = 0; i <= 9; i++) {
-		int ret = Recursion(1, i);
-	}
-	
-	for (int i = 0; i <= 9; i++) {
-		Answer += DP[i][1];
-		if (Answer >= 10007) Answer %= 10007;
-	}
-
-	cout << Answer;
-
-	//for (int digit = N; digit >= 1; digit--) {
-
-	//	if (digit != N) {
-	//		for (int num = 0; num <= 9; num++) {
-	//			DP[num][digit] = DP[num][digit + 1];
-	//		}
-	//	}
-	//	
-	//	for (int num = 8; num >= 0; num--) {
-	//		DP[num][digit] += DP[num + 1][digit];
-	//		if (DP[num][digit] >= 10007) DP[num][digit] %= 10007;
-	//	}
+	//long long Answer = 0;
+	//for (int i = 0; i <= 9; i++) {
+	//	int ret = Recursion(1, i);
+	//}
+	//
+	//for (int i = 0; i <= 9; i++) {
+	//	Answer += DP[i][1];
+	//	if (Answer >= 10007) Answer %= 10007;
 	//}
 
-	//cout << DP[0][1];
+	//cout << Answer;
+
+	for (int digit = N; digit >= 1; digit--) {
+
+		if (digit != N) {
+			for (int num = 0; num <= 9; num++) {
+				DP[num][digit] = DP[num][digit + 1];
+			}
+		}
+		
+		for (int num = 8; num >= 0; num--) {
+			DP[num][digit] += DP[num + 1][digit];
+			if (DP[num][digit] >= 10007) DP[num][digit] %= 10007;
+		}
+	}
+
+	cout << DP[0][1];
 
 
 
