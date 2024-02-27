@@ -24,14 +24,8 @@ struct flower {
 	}
 };
 
-
-
-
-
 int N;
 flower Flower[100001];
-
-
 
 int main() {
 	ios::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL);
@@ -42,13 +36,13 @@ int main() {
 		cin >> Flower[i].startMonth >> Flower[i].startDay;
 		cin >> Flower[i].endMonth >> Flower[i].endDay;
 	}
-
+	//꽃의 피는 날짜 기준 오름차순 정렬
 	sort(Flower, Flower + N);
 
 	int Answer = 0;
-	int pivotMonth = 3;
-	int pivotDay = 1;
-	int pivotIndex = 0;
+	int pivotMonth = 3;   //기준 월
+	int pivotDay = 1;     //기준 일
+	int pivotIndex = 0;   //이전에 선택된 꽃의 다음 인덱스
 	while (pivotMonth < 12) {
 
 		flower maxCandi = { 0,0,0,0 };
@@ -57,16 +51,20 @@ int main() {
 		for (int i = pivotIndex; i < N; i++) {
 			flower now = Flower[i];
 			//if (now.startMonth > pivotMonth) continue;
+			//만약 피는 Month가 기준 Month보다 크다면 더이상 탐색 X
 			if (now.startMonth > pivotMonth) {
+				//선택된 꽃이 없다면 불가능하므로 return 0
 				if (!valid) {
 					cout << "0";
 					return 0;
 				}
+				//선택된 꽃을 기준으로 다음 Turn 넘어감
 				break;
-				
 			}
+			//같은 달이라면 피는 일 기준으로 기준과 비교
 			else if (now.startMonth == pivotMonth) {
 				if (now.startDay <= pivotDay) {
+					//앞서 선택된 후보보다 지는 날이 이후라면 갱신
 					if (now.endMonth > maxCandi.endMonth) {
 						maxCandi = now;
 						valid = true;
@@ -82,7 +80,9 @@ int main() {
 				}
 				else continue;
 			}
+			//월/일 모두 무조건 후보 조건 모두 만족한다면
 			else {
+				//앞서 선택된 후보보다 지는 날이 이후라면 갱신
 				if (now.endMonth > maxCandi.endMonth) {
 					maxCandi = now;
 					valid = true;
@@ -102,7 +102,7 @@ int main() {
 			cout << "0";
 			return 0;
 		}
-
+		//기준 날짜 갱신
 		pivotMonth = maxCandi.endMonth;
 		pivotDay = maxCandi.endDay;
 		Answer++;
@@ -113,48 +113,3 @@ int main() {
 
 	return 0;
 }
-
-/*
-
-N개의 꽃
-
-4,6,9,11 :30일
-1,3,5,7,8,10,12 : 31일
-2 : 28일
-
-
-3월 1일 ~ 11월 30일까지 (3월 1일에 피는 꽃, 12월 1일에 지는 꽃)
-
-
-*/
-
-/*
-
-TC
-
-1월 1일 ~ 5월 31일
-1월 1일 ~ 6월 30일
-5월 15일 ~ 8월 31일
-6월 10일 ~ 12월 10일
-
-cnt=0
-
-기준 날짜 : 3월 1일
-1) 지는 날이 기준 날짜 이후 && 시작날 기준날짜 이하인 경우 -> 제일 긴 애들
-이런애들 없으면 그냥 0
-
-cnt++
-기준 날짜 갱신 : 6월 30일
-
-2) 지는 날이 기준 날짜 이후 && 시작날 기준날짜 이하인 경우 -> 제일 긴 애들
-이런 애들 없으면 그냥 0
-
-
-cnt++
-3) 기준 날짜 갱신 : 12월 10일 
-
----> 11월 30일 이후이므로 탈출
-
-
-cnt = 2
-*/
