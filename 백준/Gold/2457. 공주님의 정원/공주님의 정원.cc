@@ -56,7 +56,15 @@ int main() {
 
 		for (int i = pivotIndex; i < N; i++) {
 			flower now = Flower[i];
-			if (now.startMonth > pivotMonth) continue;
+			//if (now.startMonth > pivotMonth) continue;
+			if (now.startMonth > pivotMonth) {
+				if (!valid) {
+					cout << "0";
+					return 0;
+				}
+				break;
+				
+			}
 			else if (now.startMonth == pivotMonth) {
 				if (now.startDay <= pivotDay) {
 					if (now.endMonth > maxCandi.endMonth) {
