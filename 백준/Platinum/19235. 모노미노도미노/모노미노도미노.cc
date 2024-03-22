@@ -176,7 +176,20 @@ void solution() {
 
 	cin >> t >> startRow >> startCol; //(r,c)에 t type의 블록 
 	typeVersion[blockID] = t;
+	//초록색 보드에 이동할 수 있는 칸으로 이동 (경계 또는 블록 만날 때까지)   --> 나눠지지 않음
+	//O(12)
+	//int blockGreenRow = 0;   //최종적으로 놓을수 있는 행
+	//for (int r = 5; r >= 0; r--) {   
+	//	bool valid = true;
+	//	for (int c = startCol; c <= startCol + t_size_c[t]; c++) {
+	//		if (Green[r][c] != 0) valid = false;
+	//	}
 
+	//	if(valid) {
+	//		blockGreenRow = r;
+	//		break;
+	//	}
+	//}
 	int blockGreenRow_1 = 0;
 	int blockGreenRow_2 = 0;
 	for (int r = 0; r <= 5; r++) {
@@ -207,6 +220,19 @@ void solution() {
 
 
 
+	//파란색 보드에 이동할 수 있는 칸으로 이동 (경계 또는 블록 만날 때까지)   --> 나눠지지 않음
+	//O(12)
+	//int blockBlueCol = 0;
+	//for (int c = 5; c >= 0; c--) {
+	//	bool valid = true;
+	//	for (int r = startRow; r <= startRow + t_size_r[t]; r++) {
+	//		if (Blue[r][c] != 0) valid = false;
+	//	}
+	//	if (valid) {
+	//		blockBlueCol = c;
+	//		break;
+	//	}
+	//}
 
 
 	int blockBlueCol_1 = 0;
@@ -394,9 +420,13 @@ void solution() {
 	}
 
 
+	//파란색 보드의 연한 칸 (열) 확인 -> 만약 있다면 열의 수만큼 가장 오른쪽 열 삭제
 
-	updateBoard(0, 5);
-	updateBoard(1, 5);
+
+	//목표: 얻은점수와 타일이 있는 칸의 개수
+
+	//updateBoard(0, 5);
+	//updateBoard(1, 5);
 
 	blockID++;
 
@@ -430,3 +460,4 @@ int main() {
 
 	return 0;
 }
+
