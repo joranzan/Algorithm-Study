@@ -1,32 +1,14 @@
 #include<iostream>
 #include<algorithm>
-
+#include<vector>
 
 using namespace std;
-/*
-  0 1 2 3  0 1 2 3 4 5
-0            파
-1
-2
-3
 
-0 초
-1
-2
-3
-4
-5
-*/
 
 int N;
 int blockID = 1;
 int t, startRow, startCol;
-// 1: 1x1 
-// 2: 1x2
-// 3: 2x1
-const int t_size_r[4] = { 0,0,0,1 };  
-const int t_size_c[4] = { 0,0,1,0 };
-int typeVersion[10001] = { 0, };
+int typeVersion[10010] = { 0, };
 int Green[6][4] = { 0, };
 int Blue[4][6] = { 0, };
 int score = 0;
@@ -46,27 +28,37 @@ void updateBoard(int boardtype, int updatedPos) {
 				int nowType = typeVersion[nowID];
 				//블록은 있는데 2x1 블록의 윗부분이면 무시 (이미 옮겼으므로)
 				if (nowType == 3 && r != 5 && Green[r + 1][c] == nowID) continue;
-				
+				if (nowType == 3 && c != 0 && Green[r][c - 1] == nowID) continue;
 				switch (nowType) {
 				case 1: {    //1x1
+					int next_r = r;
+					for (int temp_r = r + 1; temp_r <= 5; temp_r++) {
+						if (Green[temp_r][c] != 0) {
 
-					for (int temp_r = 5; temp_r > r; temp_r--) {
-						if (Green[temp_r][c] == 0) {
-							Green[temp_r][c] = nowID;
-							Green[r][c] = 0;
 							break;
 						}
+						next_r = temp_r;
 					}
+					if (next_r != r) {
+						Green[next_r][c] = nowID;
+						Green[r][c] = 0;
+					}
+
 					break;
 				}
 				case 2: {    //1x2
 					if (c == 3) break;
-					int result_r = r;
-					for (int temp_r = r+1; temp_r <= 5; temp_r++) {
-						if (Green[temp_r][c] == 0 && Green[temp_r][c + 1] == 0) {
-							result_r = temp_r;
+					if (Green[r][c] != Green[r][c + 1]) {
+						if (Green[r][c] == Green[r][c - 1]) {
+							break;
 						}
-						else break;
+					}
+					int result_r = r;
+					for (int temp_r = r + 1; temp_r <= 5; temp_r++) {
+						if (Green[temp_r][c] != 0 || Green[temp_r][c + 1] != 0) {
+							break;
+						}
+						result_r = temp_r;
 					}
 					if (result_r == r) break;
 					Green[result_r][c] = nowID;
@@ -74,14 +66,14 @@ void updateBoard(int boardtype, int updatedPos) {
 					if (Green[r][c + 1] != nowID) break;
 					Green[result_r][c + 1] = nowID;
 					Green[r][c + 1] = 0;
-					
+
 
 					break;
 				}
 				case 3: {    //2x1
 					if (r == 0) break;
 					int result_r = r;
-					for (int temp_r = r+1; temp_r <= 5; temp_r++) {
+					for (int temp_r = r + 1; temp_r <= 5; temp_r++) {
 						if (Green[temp_r][c] == 0) {
 							result_r = temp_r;
 						}
@@ -110,16 +102,18 @@ void updateBoard(int boardtype, int updatedPos) {
 				int nowID = Blue[r][c];
 				int nowType = typeVersion[nowID];
 				//블록은 있는데 1x2 블록의 윗부분이면 무시 (이미 옮겼으므로)
-				if (nowType == 2 && c != 5 && Blue[r][c+1] == nowID) continue;
-
+				if (nowType == 2 && c != 5 && Blue[r][c + 1] == nowID) continue;
+				if (nowType == 3 && r != 0 && Blue[r - 1][c] == nowID) continue;
 				switch (nowType) {
 				case 1: {  //1x1
-					for (int temp_c = 5; temp_c > c; temp_c--) {
-						if (Blue[r][temp_c] == 0) {
-							Blue[r][temp_c] = nowID;
-							Blue[r][c] = 0;
-							break;
-						}
+					int next_c = c;
+					for (int temp_c = c + 1; temp_c <= 5; temp_c++) {
+						if (Blue[r][temp_c] != 0) break;
+						next_c = temp_c;
+					}
+					if (next_c != c) {
+						Blue[r][next_c] = nowID;
+						Blue[r][c] = 0;
 					}
 					break;
 				}
@@ -127,11 +121,11 @@ void updateBoard(int boardtype, int updatedPos) {
 
 					if (c == 0) break;
 					int result_c = c;
-					for (int temp_c = c+1; temp_c <= 5; temp_c++) {
-						if (Blue[r][temp_c] == 0) {
-							result_c = temp_c;
+					for (int temp_c = c + 1; temp_c <= 5; temp_c++) {
+						if (Blue[r][temp_c] != 0) {
+							break;
 						}
-						else break;
+						result_c = temp_c;
 					}
 					if (result_c == c) break;
 					Blue[r][result_c] = nowID;
@@ -144,12 +138,16 @@ void updateBoard(int boardtype, int updatedPos) {
 				}
 				case 3: {  //2x1
 					if (r == 3) break;
+					if (Blue[r][c] != Blue[r + 1][c]) {
+						if (Blue[r][c] == Blue[r + 1][c])
+							break;
+					}
 					int result_c = c;
-					for (int temp_c = c+1; temp_c <=5 ; temp_c++) {
-						if (Blue[r][temp_c] == 0 && Blue[r + 1][temp_c] == 0) {
-							result_c = temp_c;
+					for (int temp_c = c + 1; temp_c <= 5; temp_c++) {
+						if (Blue[r][temp_c] != 0 || Blue[r + 1][temp_c] != 0) {
+							break;
 						}
-						else break;
+						result_c = temp_c;
 					}
 					if (result_c == c) break;
 					Blue[r][result_c] = nowID;
@@ -168,25 +166,11 @@ void updateBoard(int boardtype, int updatedPos) {
 	}
 }
 
-void solution(){
+void solution() {
 
 
 	cin >> t >> startRow >> startCol; //(r,c)에 t type의 블록 
 	typeVersion[blockID] = t;
-	//초록색 보드에 이동할 수 있는 칸으로 이동 (경계 또는 블록 만날 때까지)   --> 나눠지지 않음
-	//O(12)
-	//int blockGreenRow = 0;   //최종적으로 놓을수 있는 행
-	//for (int r = 5; r >= 0; r--) {   
-	//	bool valid = true;
-	//	for (int c = startCol; c <= startCol + t_size_c[t]; c++) {
-	//		if (Green[r][c] != 0) valid = false;
-	//	}
-
-	//	if(valid) {
-	//		blockGreenRow = r;
-	//		break;
-	//	}
-	//}
 	int blockGreenRow_1 = 0;
 	int blockGreenRow_2 = 0;
 	for (int r = 0; r <= 5; r++) {
@@ -198,8 +182,11 @@ void solution(){
 		blockGreenRow_2 = r;
 	}
 
+	if (blockGreenRow_2 == 0 && t == 2) {
+		int debugging = -1;
+	}
 
-	if(t == 1){
+	if (t == 1) {
 		Green[blockGreenRow_1][startCol] = blockID;
 	}
 	else if (t == 2) {
@@ -211,24 +198,7 @@ void solution(){
 		Green[blockGreenRow_1][startCol] = blockID;
 		Green[blockGreenRow_1 - 1][startCol] = blockID;
 	}
-	
-	
-	
-	//파란색 보드에 이동할 수 있는 칸으로 이동 (경계 또는 블록 만날 때까지)   --> 나눠지지 않음
-	//O(12)
-	//int blockBlueCol = 0;
-	//for (int c = 5; c >= 0; c--) {
-	//	bool valid = true;
-	//	for (int r = startRow; r <= startRow + t_size_r[t]; r++) {
-	//		if (Blue[r][c] != 0) valid = false;
-	//	}
-	//	if (valid) {
-	//		blockBlueCol = c;
-	//		break;
-	//	}
-	//}
 
-	
 	int blockBlueCol_1 = 0;
 	int blockBlueCol_2 = 0;
 	for (int c = 0; c <= 5; c++) {
@@ -239,19 +209,21 @@ void solution(){
 		if (Blue[startRow + 1][c] != 0) break;
 		blockBlueCol_2 = c;
 	}
-	
 
+	if (blockBlueCol_2 == 0 && t == 3) {
+		int debugging = -1;
+	}
 
 	if (t == 1) {
 		Blue[startRow][blockBlueCol_1] = blockID;
 	}
-	
+
 	else if (t == 2) {
 		Blue[startRow][blockBlueCol_1] = blockID;
 		Blue[startRow][blockBlueCol_1 - 1] = blockID;
 	}
 	else if (t == 3) {
-		
+
 		int col = min(blockBlueCol_1, blockBlueCol_2);
 		Blue[startRow][col] = blockID;
 		Blue[startRow + 1][col] = blockID;
@@ -265,36 +237,44 @@ void solution(){
 	*/
 
 	bool greenFilled = true;
-	if (t == 1) {
+	if (t == 1 || t == 3) {
 		if (blockGreenRow_1 <= 1) greenFilled = false;
 	}
 	else if (t == 2) {
-		if (min(blockGreenRow_1, blockBlueCol_2) <= 1) greenFilled = false;
+		if (min(blockGreenRow_1, blockGreenRow_2) <= 1) greenFilled = false;
 	}
 
 	while (greenFilled) {
-		
-		bool isUpdated = false;
 
-		for (int r = 2; r <= 5; r++) {
-			bool isFilled = true;
+		bool isUpdated = false;
+		bool isFilled = false;
+		vector<int> filledRow;
+		for (int r = 5; r >= 2; r--) {
+			bool nowRowFilled = true;
 			for (int c = 0; c < 4; c++) {
 				if (Green[r][c] == 0) {
-					isFilled = false;
+					nowRowFilled = false;
 					break;
 				}
 			}
-
-			//만약 차있다면
-			if (isFilled) {
-				score++;
-				for (int c = 0; c < 4; c++) {
-					Green[r][c] = 0;
-				}
-				updateBoard(0, r);
-				isUpdated = true;
-				break;
+			if (nowRowFilled) {
+				filledRow.push_back(r);
+				isFilled = true;
 			}
+		}
+		score += filledRow.size();
+
+		//만약 차있다면
+		if (isFilled) {
+
+			for (int c = 0; c < 4; c++) {
+				for (int i = 0; i < filledRow.size(); i++) {
+					Green[filledRow[i]][c] = 0;
+				}
+			}
+
+			updateBoard(0, 5);
+			isUpdated = true;
 		}
 
 		if (!isUpdated) break;
@@ -307,10 +287,10 @@ void solution(){
 	있다면 -> 없어질 때까지 수행 (점수++)
 	*/
 	bool blueFilled = true;
-	if (t == 1) {
+	if (t == 1 || t == 2) {
 		if (blockBlueCol_1 <= 1) blueFilled = false;
 	}
-	else if (t == 2) {
+	else if (t == 3) {
 		if (min(blockBlueCol_1, blockBlueCol_2) <= 1) {
 			blueFilled = false;
 		}
@@ -319,26 +299,33 @@ void solution(){
 	while (blueFilled) {
 
 		bool isUpdated = false;
-
-		for (int c = 2; c <= 5; c++) {
-			bool isFilled = true;
+		bool isFilled = false;
+		vector<int> filledCol;
+		for (int c = 5; c >= 2; c--) {
+			bool nowColFilled = true;
 			for (int r = 0; r < 4; r++) {
 				if (Blue[r][c] == 0) {
-					isFilled = false;
+					nowColFilled = false;
 					break;
 				}
 			}
-
-			//만약 차있다면
-			if (isFilled) {
-				score++;
-				for (int r = 0; r < 4; r++) {
-					Blue[r][c] = 0;
-				}
-				updateBoard(1, c);
-				isUpdated = true;
-				break;
+			if (nowColFilled) {
+				isFilled = true;
+				filledCol.push_back(c);
 			}
+
+		}
+		score += filledCol.size();
+		//만약 차있다면
+		if (isFilled) {
+			for (int r = 0; r < 4; r++) {
+				for (int i = 0; i < filledCol.size(); i++) {
+					Blue[r][filledCol[i]] = 0;
+
+				}
+			}
+			updateBoard(1, 5);
+			isUpdated = true;
 		}
 
 		if (!isUpdated) break;
@@ -380,7 +367,7 @@ void solution(){
 	}
 
 	if (GreenEraseCnt != 0) {
-		for (int r = 5-GreenEraseCnt; r >= 2-GreenEraseCnt; r--) {
+		for (int r = 5 - GreenEraseCnt; r >= 2 - GreenEraseCnt; r--) {
 			for (int c = 0; c < 4; c++) {
 				Green[r + GreenEraseCnt][c] = Green[r][c];
 				Green[r][c] = 0;
@@ -388,15 +375,13 @@ void solution(){
 		}
 	}
 	if (BlueEraseCnt != 0) {
-		for (int c = 5 - BlueEraseCnt; c >= 2 - BlueEraseCnt; c--) {
+		for (int c = 5 - BlueEraseCnt; c >= 2 - BlueEraseCnt; c--) {   // cnt:2   3 ~ 0   cnt:1  4~1  cnt:0 
 			for (int r = 0; r < 4; r++) {
 				Blue[r][c + BlueEraseCnt] = Blue[r][c];
 				Blue[r][c] = 0;
 			}
 		}
 	}
-	
-
 
 
 	//파란색 보드의 연한 칸 (열) 확인 -> 만약 있다면 열의 수만큼 가장 오른쪽 열 삭제
@@ -404,13 +389,16 @@ void solution(){
 
 	//목표: 얻은점수와 타일이 있는 칸의 개수
 
+	//updateBoard(0, 5);
+	//updateBoard(1, 5);
+
 	blockID++;
 
 }
 
 int main() {
 
-	ios::sync_with_stdio(false); 
+	ios::sync_with_stdio(false);
 	cin.tie(NULL); cout.tie(NULL);
 
 
@@ -430,81 +418,10 @@ int main() {
 	}
 
 	cout << score << "\n" << cnt;
-	
+
 
 	//점수, 타일 개수 출력
 
 	return 0;
 }
 
-/*
-문제 분석
-
-(x, y) : (행, 열)
-칸 색깔 : 빨 파 초
-
-1. 블록 놓을 위치 선택 후 이동
-
-1) 빨간색에 놓을 경우 : 그위치에서 초록색, 파란색으로 이동
-(경계 만날 때까지)
-
-
-2) 하나의 행이 가득 차면 타일 모두 사라짐 (안사라질때까지)
-3) 빈 행(빨강)/열(파랑) 채워서 이동
-4) +1점 획득
-
-
-2. 특별한 칸 
-
-1) 초록색 : 0~1번 행
-블록이 있는 행의 수 만큼 아래 사라짐 + 이동
-
-2) 파란색 0~1번 열
-블록이 있는 열의 수 만큼 오른쪽 사라짐 + 이동
-
-
-3. 우선순위 : 행/열 칸 완성 다 완료 후에 점수획득 후 연한칸 처리
-
-
-4. 블록이 나눠져서 떨어지는 일은 없고 사라졌을 때만 가능
-
-
-
-목표 : 얻은점수와 타일이 있는 칸의 개수
-입력)
-N : 블록 놓는 횟수
-t x y : type, (x,y)
-
-*/
-
-/*
-
-while (greenFilled) {
-
-		for (int r = nowRow; r > 1; r--) {
-			bool isFilled = true;
-			for (int c = 0; c < 4; c++) {
-				if (Green[r][c] != 0) {
-					isFilled = false;
-					break;
-				}
-			}
-
-			//만약 차있다면
-			if (isFilled) {
-				for (int c = 0; c < 4; c++) {
-					Green[r][c] = 0;
-				}
-				//updateBoard(0);
-			}
-		}
-	}
-
-*/
-
-
-/*
-로직 수정
-
-내려갈 수 있는 길인지 찾아나가야함
-*/
